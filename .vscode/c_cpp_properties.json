@@ -1,22 +1,16 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/app/include/**",
-                "${workspaceFolder}/app/include/zmk/**",
                 "${workspaceFolder}/**"
             ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "compilerPath": "/usr/bin/gcc",
+            "defines": [],
+            "compilerPath": "${env:ZEPHYR_SDK_INSTALL_DIR}/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc",
             "cStandard": "gnu17",
             "cppStandard": "gnu++14",
-            "intelliSenseMode": "windows-gcc-x64",
-            "compileCommands": ""
+            "intelliSenseMode": "gcc-arm",
+            "compileCommands": "${workspaceFolder}/app/build/compile_commands.json"
         }
     ],
     "version": 4
