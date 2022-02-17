@@ -4,7 +4,11 @@
         "*.keymap": "dts",
         "output_status.h": "c",
         "battery_status.h": "c",
-        "usb.h": "c"
+        "usb.h": "c",
+        "bongo_cat.h": "c",
+        "device.h": "c",
+        "gpio.h": "c",
+        "kernel.h": "c"
     },
     "python.formatting.provider": "black"
 }
