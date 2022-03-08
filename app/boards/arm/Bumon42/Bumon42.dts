@@ -29,7 +29,7 @@
 	vbatt {
 		compatible = "zmk,battery-voltage-divider";
 		label = "BATTERY";
-		io-channels = <&adc 2>;
+		io-channels = <&adc 1>;
 		output-ohms = <1000000>;
 		full-ohms = <(1000000 + 1000000)>;
 	};
@@ -40,7 +40,7 @@
 		compatible = "zmk,ext-power-generic";
 		label = "EXT_POWER";
 		//control-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
-        control-gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+        control-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
 	};
 
 

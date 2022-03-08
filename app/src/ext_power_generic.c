@@ -60,6 +60,7 @@ int ext_power_save_state() {
 }
 
 static int ext_power_generic_enable(const struct device *dev) {
+
     struct ext_power_generic_data *data = dev->data;
     const struct ext_power_generic_config *config = dev->config;
 
@@ -68,6 +69,7 @@ static int ext_power_generic_enable(const struct device *dev) {
         return -EIO;
     }
     data->status = true;
+
     return ext_power_save_state();
 }
 

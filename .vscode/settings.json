@@ -8,7 +8,15 @@
         "bongo_cat.h": "c",
         "device.h": "c",
         "gpio.h": "c",
-        "kernel.h": "c"
+        "kernel.h": "c",
+        "init.h": "c",
+        "ext_power.h": "c",
+        "display.h": "c",
+        "stdio.h": "c",
+        "*.tcc": "c",
+        "fstream": "c",
+        "istream": "c",
+        "ostream": "c"
     },
     "python.formatting.provider": "black"
 }
