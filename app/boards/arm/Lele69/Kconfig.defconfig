@@ -3,10 +3,10 @@
 
 
 
-if BOARD_BUMON42
+if BOARD_Lele69
 
 config BOARD
-	default "Bumon42"
+	default "Lele69"
 
 if USB
 
