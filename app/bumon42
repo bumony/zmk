@@ -1,0 +1,1 @@
+west build -p -b Bumon42 -- -DSHIELD=Bumon42 
