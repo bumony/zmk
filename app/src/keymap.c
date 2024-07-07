@@ -31,6 +31,12 @@ static uint8_t _zmk_keymap_layer_default = 0;
 
 #define DT_DRV_COMPAT zmk_keymap
 
+#if !DT_NODE_EXISTS(DT_DRV_INST(0))
+
+#error "Keymap node not found, check a keymap is available and is has compatible = "zmk,keymap" set"
+
+#endif
+
 #define TRANSFORMED_LAYER(node)                                                                    \
     { LISTIFY(DT_PROP_LEN(node, bindings), ZMK_KEYMAP_EXTRACT_BINDING, (, ), node) }
 
@@ -76,6 +82,7 @@ static struct zmk_behavior_binding
 #endif /* ZMK_KEYMAP_HAS_SENSORS */
 
 static inline int set_layer_state(uint8_t layer, bool state) {
+    int ret = 0;
     if (layer >= ZMK_KEYMAP_LAYERS_LEN) {
         return -EINVAL;
     }
@@ -90,10 +97,13 @@ static inline int set_layer_state(uint8_t layer, bool state) {
     // Don't send state changes unless there was an actual change
     if (old_state != _zmk_keymap_layer_state) {
         LOG_DBG("layer_changed: layer %d state %d", layer, state);
-        ZMK_EVENT_RAISE(create_layer_state_changed(layer, state));
+        ret = raise_layer_state_changed(layer, state);
+        if (ret < 0) {
+            LOG_WRN("Failed to raise layer state changed (%d)", ret);
+        }
     }
 
-    return 0;
+    return ret;
 }
 
 uint8_t zmk_keymap_layer_default(void) { return _zmk_keymap_layer_default; }

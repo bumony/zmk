@@ -177,7 +177,7 @@ int zmk_usb_hid_send_mouse_report() {
 }
 #endif // IS_ENABLED(CONFIG_ZMK_MOUSE)
 
-static int zmk_usb_hid_init(const struct device *_arg) {
+static int zmk_usb_hid_init(void) {
     hid_dev = device_get_binding("HID_0");
     if (hid_dev == NULL) {
         LOG_ERR("Unable to locate HID device");
@@ -195,4 +195,4 @@ static int zmk_usb_hid_init(const struct device *_arg) {
     return 0;
 }
 
-SYS_INIT(zmk_usb_hid_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(zmk_usb_hid_init, APPLICATION, CONFIG_ZMK_USB_HID_INIT_PRIORITY);

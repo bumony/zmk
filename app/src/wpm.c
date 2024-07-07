@@ -54,8 +54,7 @@ void wpm_work_handler(struct k_work *work) {
     if (last_wpm_state != wpm_state) {
         LOG_DBG("Raised WPM state changed %d wpm_update_counter %d", wpm_state, wpm_update_counter);
 
-        ZMK_EVENT_RAISE(
-            new_zmk_wpm_state_changed((struct zmk_wpm_state_changed){.state = wpm_state}));
+        raise_zmk_wpm_state_changed((struct zmk_wpm_state_changed){.state = wpm_state});
 
         last_wpm_state = wpm_state;
     }
@@ -72,7 +71,7 @@ void wpm_expiry_function(struct k_timer *_timer) { k_work_submit(&wpm_work); }
 
 K_TIMER_DEFINE(wpm_timer, wpm_expiry_function, NULL);
 
-int wpm_init(const struct device *_device) {
+static int wpm_init(void) {
     wpm_state = 0;
     wpm_update_counter = 0;
     k_timer_start(&wpm_timer, K_SECONDS(WPM_UPDATE_INTERVAL_SECONDS),

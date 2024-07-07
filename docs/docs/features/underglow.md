@@ -6,7 +6,7 @@ sidebar_label: RGB Underglow
 RGB underglow is a feature used to control "strips" of RGB LEDs. Most of the time this is called underglow and creates a glow underneath the board using a ring of LEDs around the edge, hence the name. However, this can be extended to be used to control anything from a single LED to a long string of LEDs anywhere on the keyboard.
 
 :::info
-RGB underglow can also be used for under-key lighting. If you have RGB LEDs on your keyboard, this is what you want. For PWM/single color LEDs, see [Backlight](backlight.md).
+RGB underglow can also be used for under-key lighting. If you have RGB LEDs on your keyboard, this is what you want. For PWM/single color LEDs, see [Backlight](backlight.mdx).
 :::
 
 ZMK supports all the RGB LEDs supported by Zephyr. Here's the current list supported:
@@ -39,7 +39,7 @@ use Kconfig.
 
 If your board or shield does not have RGB underglow configured, refer to [Adding RGB Underglow to a Board](#adding-rgb-underglow-to-a-board).
 
-### Modifying the number of LEDs
+### Modifying the Number of LEDs
 
 A common issue when enabling underglow is that some of the installed LEDs do not illuminate. This can happen when a board's default underglow configuration accounts only for either the downward facing LEDs or the upward facing LEDs under each key. On a split keyboard, a good sign that this may be the problem is that the unilluminated LEDs on each half are symmetrical.
 
@@ -64,7 +64,7 @@ If you have a shield with RGB underglow, you must add a `boards/` directory with
 Inside the `boards/` folder, you define a `<board>.overlay` for each different board.
 For example, the Kyria shield has a `boards/nice_nano.overlay` file that defines the RGB underglow for the `nice_nano` board specifically.
 
-### nRF52-based boards
+### nRF52-Based Boards
 
 With nRF52 boards, you can just use `&spi3` and define the pins you want to use.
 
@@ -128,7 +128,7 @@ If your board/shield uses LEDs that require the data sent in a different order, 
 
 :::
 
-### Other boards
+### Other Boards
 
 For other boards, you must select an SPI definition that has the `MOSI` pin as your data pin going to your LED strip.
 

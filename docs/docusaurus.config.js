@@ -31,6 +31,7 @@ module.exports = {
         "linker-script",
         "log",
         "powershell",
+        "diff",
       ],
       theme,
       darkTheme,
@@ -56,6 +57,11 @@ module.exports = {
           position: "left",
         },
         {
+          to: "keymap-upgrader",
+          label: "Keymap Upgrader",
+          position: "left",
+        },
+        {
           href: "https://github.com/zmkfirmware/zmk",
           label: "GitHub",
           position: "right",
@@ -74,7 +80,7 @@ module.exports = {
             },
             {
               label: "Development",
-              to: "docs/development/setup/",
+              to: "docs/development/setup",
             },
           ],
         },
@@ -157,4 +163,11 @@ module.exports = {
       },
     ],
   ],
+  markdown: {
+    mdx1Compat: {
+      comments: false,
+      admonitions: false,
+      headingIds: true,
+    },
+  },
 };

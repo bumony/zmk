@@ -169,7 +169,9 @@ static int on_tap_dance_binding_released(struct zmk_behavior_binding *binding,
 }
 
 void behavior_tap_dance_timer_handler(struct k_work *item) {
-    struct active_tap_dance *tap_dance = CONTAINER_OF(item, struct active_tap_dance, release_timer);
+    struct k_work_delayable *d_work = k_work_delayable_from_work(item);
+    struct active_tap_dance *tap_dance =
+        CONTAINER_OF(d_work, struct active_tap_dance, release_timer);
     if (tap_dance->position == ZMK_BHV_TAP_DANCE_POSITION_FREE) {
         return;
     }
@@ -187,6 +189,9 @@ void behavior_tap_dance_timer_handler(struct k_work *item) {
 static const struct behavior_driver_api behavior_tap_dance_driver_api = {
     .binding_pressed = on_tap_dance_binding_pressed,
     .binding_released = on_tap_dance_binding_released,
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
+    .get_parameter_metadata = zmk_behavior_get_empty_param_metadata,
+#endif // IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
 };
 
 static int tap_dance_position_state_changed_listener(const zmk_event_t *eh);
@@ -251,7 +256,7 @@ static int behavior_tap_dance_init(const struct device *dev) {
         .behaviors = behavior_tap_dance_config_##n##_bindings,                                     \
         .behavior_count = DT_INST_PROP_LEN(n, bindings)};                                          \
     BEHAVIOR_DT_INST_DEFINE(n, behavior_tap_dance_init, NULL, NULL,                                \
-                            &behavior_tap_dance_config_##n, APPLICATION,                           \
+                            &behavior_tap_dance_config_##n, POST_KERNEL,                           \
                             CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &behavior_tap_dance_driver_api);
 
 DT_INST_FOREACH_STATUS_OKAY(KP_INST)
