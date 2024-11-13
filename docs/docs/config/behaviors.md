@@ -21,7 +21,7 @@ See the [zmk/app/dts/behaviors/](https://github.com/zmkfirmware/zmk/tree/main/ap
 
 Creates a custom behavior that behaves similar to a caps lock but deactivates when any key not in a continue list is pressed.
 
-See the [caps word behavior](../behaviors/caps-word.md) documentation for more details and examples.
+See the [caps word behavior](../keymaps/behaviors/caps-word.md) documentation for more details and examples.
 
 ### Devicetree
 
@@ -29,11 +29,11 @@ Definition file: [zmk/app/dts/bindings/behaviors/zmk,behavior-caps-word.yaml](ht
 
 Applies to: `compatible = "zmk,behavior-caps-word"`
 
-| Property         | Type  | Description                                                        | Default                         |
-| ---------------- | ----- | ------------------------------------------------------------------ | ------------------------------- |
-| `#binding-cells` | int   | Must be `<0>`                                                      |                                 |
-| `continue-list`  | array | List of [key codes](/docs/codes) which do not deactivate caps lock | `<UNDERSCORE BACKSPACE DELETE>` |
-| `mods`           | int   | A bit field of modifiers to apply                                  | `<MOD_LSFT>`                    |
+| Property         | Type  | Description                                                                          | Default                         |
+| ---------------- | ----- | ------------------------------------------------------------------------------------ | ------------------------------- |
+| `#binding-cells` | int   | Must be `<0>`                                                                        |                                 |
+| `continue-list`  | array | List of [keycodes](/docs/keymaps/list-of-keycodes) which do not deactivate caps lock | `<UNDERSCORE BACKSPACE DELETE>` |
+| `mods`           | int   | A bit field of modifiers to apply                                                    | `<MOD_LSFT>`                    |
 
 `continue-list` is treated as if it always includes alphanumeric characters (A-Z, 0-9).
 
@@ -41,15 +41,22 @@ See [dt-bindings/zmk/modifiers.h](https://github.com/zmkfirmware/zmk/blob/main/a
 
 You can use the following nodes to tweak the default behaviors:
 
-| Node         | Behavior                               |
-| ------------ | -------------------------------------- |
-| `&caps_word` | [Caps Word](../behaviors/caps-word.md) |
+| Node         | Behavior                                       |
+| ------------ | ---------------------------------------------- |
+| `&caps_word` | [Caps Word](../keymaps/behaviors/caps-word.md) |
 
 ## Hold-Tap
 
 Creates a custom behavior that triggers one behavior when a key is held or a different one when the key is tapped.
 
-See the [hold-tap behavior](../behaviors/hold-tap.mdx) documentation for more details and examples.
+See the [hold-tap behavior](../keymaps/behaviors/hold-tap.mdx) documentation for more details and examples.
+
+### Kconfig
+
+| Config                                             | Type | Description                                                                                  | Default |
+| -------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------- | ------- |
+| `CONFIG_ZMK_BEHAVIOR_HOLD_TAP_MAX_HELD`            | int  | Maximum number of simultaneous held hold-taps                                                | 10      |
+| `CONFIG_ZMK_BEHAVIOR_HOLD_TAP_MAX_CAPTURED_EVENTS` | int  | Maximum number of system events to capture while deferring a hold or tap decision resolution | 40      |
 
 ### Devicetree
 
@@ -57,18 +64,19 @@ Definition file: [zmk/app/dts/bindings/behaviors/zmk,behavior-hold-tap.yaml](htt
 
 Applies to: `compatible = "zmk,behavior-hold-tap"`
 
-| Property                      | Type     | Description                                                                                                    | Default            |
-| ----------------------------- | -------- | -------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `#binding-cells`              | int      | Must be `<2>`                                                                                                  |                    |
-| `bindings`                    | phandles | A list of two behaviors (without parameters): one for hold and one for tap                                     |                    |
-| `flavor`                      | string   | Adjusts how the behavior chooses between hold and tap                                                          | `"hold-preferred"` |
-| `tapping-term-ms`             | int      | How long in milliseconds the key must be held to trigger a hold                                                |                    |
-| `quick-tap-ms`                | int      | Tap twice within this period (in milliseconds) to trigger a tap, even when held                                | -1 (disabled)      |
-| `require-prior-idle-ms`       | int      | Triggers a tap immediately if any non-modifier key was pressed within `require-prior-idle-ms` of the hold-tap. | -1 (disabled)      |
-| `retro-tap`                   | bool     | Triggers the tap behavior on release if no other key was pressed during a hold                                 | false              |
-| `hold-while-undecided`        | bool     | Triggers the hold behavior immediately on press and releases before a tap                                      | false              |
-| `hold-while-undecided-linger` | bool     | Continues to hold the hold behavior until after the tap is released                                            | false              |
-| `hold-trigger-key-positions`  | array    | If set, pressing the hold-tap and then any key position _not_ in the list triggers a tap.                      |                    |
+| Property                      | Type     | Description                                                                                                   | Default            |
+| ----------------------------- | -------- | ------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `#binding-cells`              | int      | Must be `<2>`                                                                                                 |                    |
+| `bindings`                    | phandles | A list of two behaviors (without parameters): one for hold and one for tap                                    |                    |
+| `flavor`                      | string   | Adjusts how the behavior chooses between hold and tap                                                         | `"hold-preferred"` |
+| `tapping-term-ms`             | int      | How long in milliseconds the key must be held to trigger a hold                                               |                    |
+| `quick-tap-ms`                | int      | Tap twice within this period (in milliseconds) to trigger a tap, even when held                               | -1 (disabled)      |
+| `require-prior-idle-ms`       | int      | Triggers a tap immediately if any non-modifier key was pressed within `require-prior-idle-ms` of the hold-tap | -1 (disabled)      |
+| `retro-tap`                   | bool     | Triggers the tap behavior on release if no other key was pressed during a hold                                | false              |
+| `hold-while-undecided`        | bool     | Triggers the hold behavior immediately on press and releases before a tap                                     | false              |
+| `hold-while-undecided-linger` | bool     | Continues to hold the hold behavior until after the tap is released                                           | false              |
+| `hold-trigger-key-positions`  | array    | If set, pressing the hold-tap and then any key position _not_ in the list triggers a tap                      |                    |
+| `hold-trigger-on-release`     | bool     | If set, delays the evaluation of `hold-trigger-key-positions` until key release                               | false              |
 
 This behavior forwards the first parameter it receives to the parameter of the first behavior specified in `bindings`, and second parameter to the parameter of the second behavior.
 
@@ -79,22 +87,22 @@ The `flavor` property may be one of:
 - `"tap-preferred"`
 - `"tap-unless-interrupted"`
 
-See the [hold-tap behavior documentation](../behaviors/hold-tap.mdx) for an explanation of each flavor.
+See the [hold-tap behavior documentation](../keymaps/behaviors/hold-tap.mdx) for an explanation of each flavor.
 
 `hold-trigger-key-positions` is an array of zero-based key position indices.
 
 You can use the following nodes to tweak the default behaviors:
 
-| Node  | Behavior                                      |
-| ----- | --------------------------------------------- |
-| `&lt` | [Layer-tap](../behaviors/layers.md#layer-tap) |
-| `&mt` | [Mod-tap](../behaviors/mod-tap.md)            |
+| Node  | Behavior                                              |
+| ----- | ----------------------------------------------------- |
+| `&lt` | [Layer-tap](../keymaps/behaviors/layers.md#layer-tap) |
+| `&mt` | [Mod-tap](../keymaps/behaviors/mod-tap.md)            |
 
 ## Key Repeat
 
 Creates a custom behavior that repeats the whatever key code was last sent.
 
-See the [key repeat behavior](../behaviors/key-repeat.md) documentation for more details and examples.
+See the [key repeat behavior](../keymaps/behaviors/key-repeat.md) documentation for more details and examples.
 
 ### Devicetree
 
@@ -111,15 +119,15 @@ For the `usage-pages` property, use the `HID_USAGE_*` defines from [dt-bindings/
 
 You can use the following nodes to tweak the default behaviors:
 
-| Node          | Behavior                                 |
-| ------------- | ---------------------------------------- |
-| `&key_repeat` | [Key repeat](../behaviors/key-repeat.md) |
+| Node          | Behavior                                         |
+| ------------- | ------------------------------------------------ |
+| `&key_repeat` | [Key repeat](../keymaps/behaviors/key-repeat.md) |
 
 ## Macro
 
 Creates a custom behavior which triggers a sequence of other behaviors.
 
-See the [macro behavior](../behaviors/macros.md) documentation for more details and examples.
+See the [macro behavior](../keymaps/behaviors/macros.md) documentation for more details and examples.
 
 ### Kconfig
 
@@ -167,7 +175,7 @@ The following macro-specific behaviors can be added at any point in the `binding
 
 Creates a custom behavior that triggers one of two behaviors depending on whether certain modifiers are held.
 
-See the [mod-morph behavior](../behaviors/mod-morph.md) documentation for more details and examples.
+See the [mod-morph behavior](../keymaps/behaviors/mod-morph.md) documentation for more details and examples.
 
 ### Devicetree
 
@@ -185,16 +193,16 @@ See [dt-bindings/zmk/modifiers.h](https://github.com/zmkfirmware/zmk/blob/main/a
 
 You can use the following nodes to tweak the default behaviors:
 
-| Node     | Behavior                                  |
-| -------- | ----------------------------------------- |
-| `&gresc` | [Grave escape](../behaviors/mod-morph.md) |
+| Node     | Behavior                                          |
+| -------- | ------------------------------------------------- |
+| `&gresc` | [Grave escape](../keymaps/behaviors/mod-morph.md) |
 
 ## Sensor Rotation
 
 Creates a custom behavior which sends a tap of other behaviors when a sensor is rotated.
 Has two variants: with `compatible = "zmk,behavior-sensor-rotate"` it accepts no parameters when used, whereas with `compatible = "zmk,behavior-sensor-rotate-var"` it accepts two parameters.
 
-See the [sensor rotation behavior](../behaviors/sensor-rotate.md) documentation for more details and examples.
+See the [sensor rotation behavior](../keymaps/behaviors/sensor-rotate.md) documentation for more details and examples.
 
 ### Devicetree
 
@@ -225,7 +233,13 @@ With `compatible = "zmk,behavior-sensor-rotate-var"`, this behavior forwards the
 
 Creates a custom behavior that triggers a behavior and keeps it pressed it until another key is pressed and released.
 
-See the [sticky key behavior](../behaviors/sticky-key.md) and [sticky layer behavior](../behaviors/sticky-layer.md) documentation for more details and examples.
+See the [sticky key behavior](../keymaps/behaviors/sticky-key.md) and [sticky layer behavior](../keymaps/behaviors/sticky-layer.md) documentation for more details and examples.
+
+### Kconfig
+
+| Config                                    | Type | Description                                     | Default |
+| ----------------------------------------- | ---- | ----------------------------------------------- | ------- |
+| `CONFIG_ZMK_BEHAVIOR_STICKY_KEY_MAX_HELD` | int  | Maximum number of simultaneous held sticky keys | 10      |
 
 ### Devicetree
 
@@ -246,16 +260,16 @@ This behavior forwards the one parameter it receives to the parameter of the beh
 
 You can use the following nodes to tweak the default behaviors:
 
-| Node  | Behavior                                     |
-| ----- | -------------------------------------------- |
-| `&sk` | [Sticky key](../behaviors/sticky-key.md)     |
-| `&sl` | [Sticky layer](../behaviors/sticky-layer.md) |
+| Node  | Behavior                                             |
+| ----- | ---------------------------------------------------- |
+| `&sk` | [Sticky key](../keymaps/behaviors/sticky-key.md)     |
+| `&sl` | [Sticky layer](../keymaps/behaviors/sticky-layer.md) |
 
 ## Tap Dance
 
 Creates a custom behavior that triggers a different behavior corresponding to the number of times the key is tapped.
 
-See the [tap dance behavior](../behaviors/tap-dance.mdx) documentation for more details and examples.
+See the [tap dance behavior](../keymaps/behaviors/tap-dance.mdx) documentation for more details and examples.
 
 ### Devicetree
 
