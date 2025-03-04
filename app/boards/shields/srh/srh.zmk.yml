@@ -1,0 +1,8 @@
+file_format: "1"
+id: srh
+name: srh
+type: shield
+url: https://github.com/MythosMann/tg4x
+requires: [pro_micro]
+features:
+  - keys
