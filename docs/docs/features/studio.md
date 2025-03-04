@@ -2,7 +2,13 @@
 title: ZMK Studio
 ---
 
-ZMK Studio provides runtime update functionality to ZMK powered devices, allowing users to change their keymap layers without flashing new firmware to their keyboards. Studio is still under active development, and is not yet ready for casual end user use.
+ZMK Studio provides runtime update functionality to ZMK powered devices, allowing users to change their keymap layers without flashing new firmware to their keyboards.
+
+:::info
+
+To use ZMK Studio, a keyboard needs to be [configured appropriately](#adding-zmk-studio-support-to-a-keyboard). ZMK has updated some, but not all, of its in-tree keyboards for use with ZMK Studio, the list of which can be found [here](/blog/2024/11/11/zmk-studio-mvp-ga). If your keyboard is supported by an external module/config, check with the maintainer to see if support has been added.
+
+:::
 
 ## Capabilities
 
@@ -30,6 +36,7 @@ ZMK Studio currently has the following capabilities:
 |   ✅   | Renaming layers & enabling [extra layers](#including-extra-layers)                                                                        |
 |   ❌   | Adding more layers than specified by devicetree                                                                                           |
 |   💡   | Host locale selection                                                                                                                     |
+|   💡   | Importing and exporting keymaps                                                                                                           |
 
 Items listed as "planned", "under development", "low priority", or "not planned" can be configured using [devicetree](../config/index.md#devicetree-files) instead.
 
@@ -49,7 +56,7 @@ Generally, if you intend to use ZMK Studio, then you should not make any further
 
 You can use ZMK Studio with Chrome/Edge at https://zmk.studio/.
 
-To use the native app for Linux, macOS, or Windows, download the appropriate file from the [latest release](https://github.com/zmkfirmware/zmk-studio/releases).
+To use the native app for Linux, macOS, or Windows, visit the [download page](https://zmk.studio/download).
 
 :::warning
 
@@ -66,22 +73,19 @@ Building for ZMK Studio involves two main additional items.
 
 ### GitHub Actions
 
-First add a `studio-rpc-usb-uart` to the `snippet` property of your build configuration. For a split keyboard, you should do this _only_ for your central/left side, e.g.:
+Add a `studio-rpc-usb-uart` to the `snippet` property of your build configuration, in the `build.yaml` file at the root of your user config. Enabling the `ZMK_STUDIO` Kconfig setting can also be done from the `build.yaml` file using the `cmake-args` property.
 
-```
+For a split keyboard, you should do this _only_ for your central/left side, e.g.:
+
+```yaml title="build.yaml"
 ---
 include:
   - board: nice_nano_v2
     shield: corne_left
     snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
   - board: nice_nano_v2
     shield: corne_right
-```
-
-Next, enable the `ZMK_STUDIO` Kconfig symbol, for example by adding the following line to your .conf file:
-
-```
-CONFIG_ZMK_STUDIO=y
 ```
 
 ### Local Build
@@ -159,8 +163,14 @@ The reserved layers will be ignored during regular ZMK builds but will become av
 
 ## Adding ZMK Studio Support to a Keyboard
 
-To allow ZMK Studio to be used with a keyboard, the keyboard will need to have a physical layout with the `keys` property defined. Relevant information can be found in:
+To allow ZMK Studio to be used with a keyboard, the keyboard will need to have a physical layout with the `keys` property defined. The keyboard should also **not** have a `chosen` `zmk,matrix-transform`. Relevant information can be found in:
 
 - The [dedicated page on physical layouts](../development/hardware-integration/physical-layouts.md), informing you how to define one
 - The [new shield guide](../development/hardware-integration/new-shield.mdx), informing you how to select a physical layout once defined
 - The corresponding [configuration page](../config/layout.md#physical-layout), for reference
+
+To use the `studio-rpc-usb-uart` snippet, the keyboard also needs to be configured to allow CDC-ACM console snippets (this is also used for [USB logging](../development/usb-logging.mdx)). If your keyboard is a composite keyboard, consisting of an in-tree board and a shield, then you can skip this step as the board will already be configured properly. Relevant information on that can be found [in the Zephyr documentation](https://docs.zephyrproject.org/3.5.0/snippets/cdc-acm-console/README.html).
+
+Firmware with ZMK Studio enabled require significantly more RAM. Some MCUs, such as the STM32F072 series, will require fine tuning of various settings in order to reduce the RAM consumption enough for a Studio enabled build to fit.
+
+Finally, once you have successfully built and tested firmware with ZMK Studio enabled, add the `studio` flag to your keyboard's [metadata](../development/hardware-integration/hardware-metadata-files#features).
